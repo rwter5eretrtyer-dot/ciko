@@ -12,6 +12,7 @@ export const env = {
   secureCookie: process.env.COOKIE_SECURE === 'true',
   seedDemo: process.env.SEED_DEMO === 'true',
   uploadDir: path.resolve(process.env.UPLOAD_DIR || './uploads'),
+  frontendDir: process.env.FRONTEND_DIR ? path.resolve(process.env.FRONTEND_DIR) : '',
   publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://localhost:8080'
 };
 export function assertSecrets(): void {
