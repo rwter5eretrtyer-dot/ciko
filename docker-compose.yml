@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ciko
+      POSTGRES_USER: ciko
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ciko_local_only}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ciko -d ciko"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgres://ciko:${POSTGRES_PASSWORD:-ciko_local_only}@db:5432/ciko
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-replace-this-with-a-random-access-secret-at-least-32}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET:-replace-this-with-a-different-refresh-secret-32}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - video_uploads:/app/uploads
+    expose: ["4000"]
+  web:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on: [api]
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+volumes:
+  postgres_data:
+  video_uploads:

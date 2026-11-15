@@ -1,0 +1,33 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+*.log
+backend/uploads/
+.DS_Store
+# Секреты и пароли
+.env
+.env.*
+!.env.example
+
+# Установленные зависимости
+node_modules/
+
+# Результаты сборки
+dist/
+coverage/
+build/
+
+# Локальные загруженные видео
+uploads/
+
+# Результаты тестирования
+test-results/
+playwright-report/
+
+# Временные файлы
+*.log
+.DS_Store
+*.tsbuildinfo
+*.tsbuildinfo
