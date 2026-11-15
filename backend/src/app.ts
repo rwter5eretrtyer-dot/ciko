@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'node:path';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { rateLimit } from 'express-rate-limit';
@@ -42,6 +43,15 @@ export function createApp() {
   app.use('/api/uploads',uploadsRoutes);
   app.use('/api/studio',studioRoutes);
   app.use('/api/rooms',roomsRoutes);
+  // При облачном развёртывании Express также отдаёт собранный React.
+  // В Docker Compose этот блок отключён: там frontend обслуживает Nginx.
+  if (env.frontendDir) {
+    app.use(express.static(env.frontendDir));
+    app.use((req,res,next) => {
+      if (req.method !== 'GET' || req.path.startsWith('/api') || req.path.startsWith('/uploads') || !req.accepts('html')) return next();
+      res.sendFile(path.join(env.frontendDir, 'index.html'));
+    });
+  }
   app.use((_req,res)=>fail(res,404,'NOT_FOUND','Маршрут не существует'));
   app.use(errors);
   return app;
