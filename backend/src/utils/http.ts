@@ -10,10 +10,11 @@ export function asyncRoute(fn:(req:Request,res:Response,next:NextFunction)=>Prom
   return (req:Request,res:Response,next:NextFunction) => { Promise.resolve(fn(req,res,next)).catch(next); };
 }
 export function errors(error:unknown, _req:Request, res:Response, _next:NextFunction):void {
+  void _next;
   if (error instanceof HttpError) return fail(res,error.status,error.code,error.message);
   if (error instanceof ZodError) return fail(res,400,'VALIDATION_ERROR',error.issues.map(i=>`${i.path.join('.')}: ${i.message}`).join('; '));
-  if (error && typeof error === 'object' && 'code' in error && error.code === '23505') return fail(res,409,'CONFLICT','Такая запись уже существует');
-  if (error && typeof error === 'object' && 'code' in error && error.code === '22P02') return fail(res,400,'INVALID_ID','Некорректный идентификатор');
-  console.error('Ошибка API:',error);
-  return fail(res,500,'SERVER_ERROR','Внутренняя ошибка сервера');
+  if (error && typeof error === 'object' && 'code' in error && error.code === '23505') return fail(res,409,'CONFLICT','РўР°РєР°СЏ Р·Р°РїРёСЃСЊ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚');
+  if (error && typeof error === 'object' && 'code' in error && error.code === '22P02') return fail(res,400,'INVALID_ID','РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ');
+  console.error('РћС€РёР±РєР° API:',error);
+  return fail(res,500,'SERVER_ERROR','Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°');
 }
