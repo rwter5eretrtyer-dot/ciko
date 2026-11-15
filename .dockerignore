@@ -3,3 +3,13 @@ dist
 coverage
 .env
 .git
+**/node_modules
+**/dist
+**/coverage
+**/.env
+**/.env.*
+!**/.env.example
+**/uploads
+**/*.tsbuildinfo
+docs
+*.zip
